@@ -1,6 +1,5 @@
 class Student:
 
-
     def __init__(self, name, surname):
         self.name = name
         self.surname = surname
@@ -9,6 +8,7 @@ class Student:
         self.grades = {}
 
     def rate_lecturer(self, lecturer, course, grade):
+        """Method for setting grades for lectureres by students"""
         if isinstance(lecturer, Lecturer) and course in lecturer.courses_attached and course in self.courses_in_progress:
             if course in lecturer.grades:
                 lecturer.grades[course] += [grade]
@@ -18,6 +18,7 @@ class Student:
             return 'Ошибка'
 
     def average_grade(self):
+        """Method for calculating the average grade of students"""
         average_grade = 0
         index = 0
 
@@ -25,14 +26,14 @@ class Student:
             for i in range(len(value)):
                 average_grade += value[i]
                 index += 1
-        
+
         return str(average_grade/index) 
 
     def __str__(self):
+        """Reformed string method"""
         return 'Имя: ' + self.name + '\nФамилия: ' + self.surname + '\nСредняя оценка за домашние задания: ' + \
                 self.average_grade() + '\nКурсы в процессе изучения: ' + ', '.join(self.courses_in_progress) + \
                 '\nЗавершенные курсы: ' + ', '.join(self.finished_courses)
-
 
 class Mentor:
     def __init__(self, name, surname):
@@ -41,10 +42,10 @@ class Mentor:
         self.courses_attached = []
         self.grades = {}
 
-
 class Lecturer(Mentor):
 
     def average_grade(self):
+        """Method for calculating the average grade of lecturers"""
         average_grade = 0
         index = 0
 
@@ -56,28 +57,36 @@ class Lecturer(Mentor):
         return average_grade/index
 
     def __str__(self):
+        """Reformed string method"""
         return 'Имя: ' + self.name + '\nФамилия: ' + self.surname + '\nСредняя оценка за лекции: ' + str(self.average_grade())
 
     def __lt__(self, other):
+        """Reformed < method"""
         return self.average_grade() < other.average_grade()
 
     def __le__(self, other):
+        """Reformed <= method"""
         return self.average_grade() <= other.average_grade()
 
     def __gt__(self, other):
+        """Reformed > method"""
         return self.average_grade() > other.average_grade()
 
     def __ge__(self, other):
+        """Reformed >= method"""
         return self.average_grade() >= other.average_grade()
 
     def __eq__(self, other):
+        """Reformed == method"""
         return self.average_grade() == other.average_grade()
 
     def __ne__(self, other):
+        """Reformed != method"""
         return self.average_grade() != other.average_grade()
 
 class Reviewer(Mentor):
     def rate_hw(self, student, course, grade):
+        """Method for setting grades for students homeworks"""
         if isinstance(student, Student) and course in self.courses_attached and course in student.courses_in_progress:
             if course in student.grades:
                 student.grades[course] += [grade]
@@ -88,9 +97,11 @@ class Reviewer(Mentor):
 
 
     def __str__(self):
+        """Reformed string method"""
         return 'Имя: ' + self.name + '\nФамилия: ' + self.surname 
 
 def hws_average_grade(students, course):
+    """Function for calculating the homeworks average grade for a certain course"""
    
     students_list = students.split(', ')
     grade = 0
@@ -107,10 +118,10 @@ def hws_average_grade(students, course):
                     counter += 1
                     grade += value
     
-    print(f'Средняя оценка студентов по курсу {course} составляет {str(grade/counter)}')
-    
+    print(f'Средняя оценка студентов по курсу {course} составляет {str(grade/counter)}')   
 
 def lects_average_grade(lects, course):
+    """Fucntion for calculating the lecturers average grade for a certain course"""
        
     lects_list = lects.split(', ')
     grade = 0
@@ -121,17 +132,16 @@ def lects_average_grade(lects, course):
         mapped_list.append(name_mapping[lects_list[i]])
 
     for lecturer in mapped_list:
-        print(lecturer)
         if isinstance(lecturer, Lecturer) and course in lecturer.courses_attached:
             if course in lecturer.grades:
                 for value in lecturer.grades[course]:
                     counter += 1
                     grade += value
     
-    print(f'Средняя оценка лекторов по курсу {course} составляет {str(grade/counter)}')
-    
+    print(f'Средняя оценка лекторов по курсу {course} составляет {str(grade/counter)}') 
 
 def lects_compare():
+    """Function for test output of reformed comparison methods"""
     print('\nСранвение лекторов:')
     print('>: ' + str(first_lecturer < second_lecturer))
     print('>=: ' + str(first_lecturer <= second_lecturer))
@@ -141,6 +151,7 @@ def lects_compare():
     print('!=: ' + str(first_lecturer != second_lecturer))
 
 def helper(comm):
+    """Function for displaying necessary information for working with program in terminal"""
     if comm != 'help':
         print('\nКоманда \"'+comm+'\" не поддерживается')
     
@@ -148,15 +159,30 @@ def helper(comm):
             '\nstuds - функция подсчета оценки за домашнее задание по всем студентам в рамках курса' + \
             '\nlects - функция подсчета средней оценки за лекции всех лекторов в рамках курса' +\
             '\ncompare - функция вывода результатов сравнения лекторов'+\
-            '\ncode - исполнение кода exec(compile(code_goes_here, \'exec\', \'exec\'))'
+            '\nmethods - вызов метода __str__ вывода классов Student, Lecturer, Reviewer'+\
+            '\ncode - исполнение кода exec(compile(code_goes_here, \'compile() code\', \'exec\'))'+\
+            '\nhelp - вывод справки' +\
             '\nquit - выход' +\
             f'\nСписок доступных имен студентов и лекторов: {", ".join(name_mapping.keys())}' +\
             '\n--------------------------------------------------\n')
 
-def npc_maker():
-    pass
+def mapper():
+    """Function to replace input strings with object names"""
+    global name_mapping
+
+    name_mapping = {
+        'Archer Sterling' : first_student,
+        'Lana Kane' : second_student,
+        'Melory Archer' : first_lecturer,
+        'Cyril Figgis' : second_lecturer
+    }
 
 def main():
+    """Main function"""
+
+    mapper()
+
+    helper('help')
 
     while True:
         comm = input('Введите команду:')
@@ -167,8 +193,11 @@ def main():
             lects_average_grade(input('Введите список лекторов (имя фамилия,...) через запятую: '), input('Введите наименование курса: '))
         elif comm.lower() == 'compare':
             lects_compare()
+        elif comm.lower() == 'methods':
+            print(f'Список студентов: \n{first_student}\n{second_student}\n\nСписок лекторов:\n{first_lecturer}\n{second_lecturer}'+\
+                f'\n\nСписок проверяющих:\n{first_reviewer}\n{second_reviewer}\n')
         elif comm.lower() == 'code':
-            code = input('code to execute: ')
+            code = input('Введите код для исполнения, например \"print(first_student)\": ')
             exec(compile(code, 'compile() code', 'exec'))
         elif comm.lower() == 'help':
             helper(comm)
@@ -178,17 +207,7 @@ def main():
         else:
             helper(comm)
 
-def mapper():
-    global name_mapping
-
-    name_mapping = {
-        'Archer Sterling' : first_student,
-        'Lana Kane' : second_student,
-        'Melory Archer' : first_lecturer,
-        'Cyril Figgis' : second_lecturer
-    }
-
-
+"""Creation of the objects and calling their methods"""
 first_student = Student('Archer', 'Sterling')
 second_student = Student('Lana', 'Kane')
 
@@ -232,8 +251,5 @@ second_student.rate_lecturer(second_lecturer, 'Python', 3)
 second_student.rate_lecturer(second_lecturer, 'GIT', 5)
 
 
-mapper() 
-
-helper('help')
-
+"""Calling the main function"""
 main()
